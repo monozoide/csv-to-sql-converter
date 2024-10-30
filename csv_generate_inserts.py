@@ -8,6 +8,10 @@ sql_dir_path = 'sql-files'
 # Certifique-se de que o diretório de saída existe
 os.makedirs(sql_dir_path, exist_ok=True)
 
+# Função para escapar aspas simples e duplas nos valores
+def escape_quotes(value):
+    return value.replace("'", "''").replace('"', '\"')
+
 # Iterar sobre todos os arquivos CSV no diretório
 for csv_file_name in os.listdir(csv_dir_path):
     if csv_file_name.endswith('.csv'):
@@ -22,7 +26,7 @@ for csv_file_name in os.listdir(csv_dir_path):
             reader = csv.DictReader(csvfile)
             inserts = []
             for row in reader:
-                values = ', '.join([f"'{value}'" for value in row.values()])
+                values = ', '.join([f"'{escape_quotes(value)}'" for value in row.values()])
                 inserts.append(f"INSERT INTO {table_name} ({', '.join(row.keys())}) VALUES ({values});")
         
         # Caminho completo para o arquivo SQL de saída
