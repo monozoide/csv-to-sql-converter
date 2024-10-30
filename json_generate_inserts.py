@@ -10,7 +10,11 @@ os.makedirs(sql_dir_path, exist_ok=True)
 
 # Função para escapar aspas simples e duplas nos valores
 def escape_quotes(value):
-    return value.replace("'", "''").replace('"', '\"')
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return 'null'  # Handle NULL values
+    return value.replace("'", "\'").replace('"', '\"')
 
 # Iterar sobre todos os arquivos JSON no diretório
 for json_file_name in os.listdir(json_dir_path):
@@ -26,8 +30,12 @@ for json_file_name in os.listdir(json_dir_path):
             data = json.load(jsonfile)
             inserts = []
             for row in data:
-                values = ', '.join([f"'{escape_quotes(str(value))}'" for value in row.values()])
-                inserts.append(f"INSERT INTO {table_name} ({', '.join(row.keys())}) VALUES ({values});")
+                values = ', '.join([
+                    f"{escape_quotes(value)}" if isinstance(value, bool) or value is None else f"'{escape_quotes(str(value))}'"
+                    for value in row.values()
+                ])
+                columns = ', '.join([f'"{col}"' for col in row.keys()])
+                inserts.append(f"INSERT INTO {table_name} ({columns}) VALUES ({values});")
         
         # Caminho completo para o arquivo SQL de saída
         sql_file_path = os.path.join(sql_dir_path, f"{table_name}.sql")
