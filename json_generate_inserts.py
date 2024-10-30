@@ -14,7 +14,7 @@ def escape_quotes(value):
         return value
     if value is None:
         return 'null'  # Handle NULL values
-    return value.replace("'", "\'").replace('"', '\"')
+    return value.replace("'", "''").replace('"', '\"').replace("`", "\`")
 
 # Iterar sobre todos os arquivos JSON no diretório
 for json_file_name in os.listdir(json_dir_path):
