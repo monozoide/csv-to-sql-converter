@@ -27,7 +27,7 @@ for csv_file_name in os.listdir(csv_dir_path):
         
         # Leitura do arquivo CSV e geração dos comandos INSERT
         with open(csv_file_path, 'r') as csvfile:
-            reader = csv.DictReader(csvfile)
+            reader = csv.DictReader(csvfile, delimiter=';')
             inserts = []
             for row in reader:
                 values = ', '.join([f"'{escape_quotes(value)}'" for value in row.values()])
