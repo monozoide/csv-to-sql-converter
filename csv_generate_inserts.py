@@ -10,7 +10,11 @@ os.makedirs(sql_dir_path, exist_ok=True)
 
 # Função para escapar aspas simples e duplas nos valores
 def escape_quotes(value):
-    return value.replace("'", "''").replace('"', '\"')
+    if isinstance(value, list):
+        # Se o valor for uma lista, processa cada elemento recursivamente
+        return ', '.join([escape_quotes(str(item)) for item in value])
+    # Se não for uma lista, trata como string
+    return str(value).replace("'", "''").replace('"', '\"')
 
 # Iterar sobre todos os arquivos CSV no diretório
 for csv_file_name in os.listdir(csv_dir_path):
